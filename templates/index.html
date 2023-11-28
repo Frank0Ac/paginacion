@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paginación en Flask</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Datos de la Página {{ pagina }}</h1>
+
+        <!-- Grid de datos con imágenes -->
+        <div class="row">
+            {% for dato in datos %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename=dato.imagen) }}" class="card-img-top" alt="{{ dato.nombre }}" height="300px" width="300px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ dato.nombre }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <!-- Controles de paginación -->
+        <form method="post" class="form-inline mt-4">
+            {{ form.hidden_tag() }}
+            <div class="form-group mr-2">
+                <label for="pagina" class="mr-2">Ir a la página:</label>
+                {{ form.pagina(size=2) }}
+            </div>
+            <button type="submit" class="btn btn-primary">Ir</button>
+        </form>
+
+        <nav aria-label="Page navigation mt-4">
+            <ul class="pagination justify-content-center">
+                {% if pagina > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?pagina={{ pagina - 1 }}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo; Anterior</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num_pagina in range(1, (datos|length // ELEMENTOS_POR_PAGINA) + 2) %}
+                    <li class="page-item {% if num_pagina == pagina %}active{% endif %}">
+                        <a class="page-link" href="?pagina={{ num_pagina }}">{{ num_pagina }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if datos|length == ELEMENTOS_POR_PAGINA %}
+                    <li class="page-item">
+                        <a class="page-link" href="?pagina={{ pagina + 1 }}" aria-label="Siguiente">
+                            <span aria-hidden="true">Siguiente &raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Scripts de Bootstrap (jQuery y Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
